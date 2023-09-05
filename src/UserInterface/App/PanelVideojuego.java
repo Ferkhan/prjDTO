@@ -3,6 +3,7 @@ package UserInterface.App;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,32 +16,25 @@ import BusinessLogic.VideojuegoBL;
 import BusinessLogic.Entities.Videojuego;
 import Framework.AppException;
 
-public class PanelVideojuego extends JPanel implements ActionListener{
-    private VideojuegoBL 
-            videojuegoBL;
-    private JTable 
-            tabla;
-    private JButton 
-            btnPrev,
+public class PanelVideojuego extends JPanel implements ActionListener {
+    private VideojuegoBL videojuegoBL;
+    private JTable tabla;
+    private JButton btnPrev,
             btnNext,
             btnInicio,
             btnFinal;
-    private JPanel
-            pnlBoton;
-    private DefaultTableModel 
-            tableModel;
-    private int 
-            pagActual,
+    private JPanel pnlBoton;
+    private DefaultTableModel tableModel;
+    private String[] header;
+    private Object[][] data;
+    private JLabel lblPagina;
+    private int pagActual,
             cantFilas,
-            pagMax;
-    private String[] 
-            header;
-    private Object[][] 
-            data;
-    private JLabel
-            lblPagina;
+            pagMax,
+            inicio,
+            ultimo;
 
-    PanelVideojuego() throws AppException {
+    PanelVideojuego() throws AppException, SQLException {
         inicializarRecursos();
         activarBotones();
         personalizarPanel();
@@ -48,33 +42,28 @@ public class PanelVideojuego extends JPanel implements ActionListener{
         setVisible(true);
     }
 
-    private void inicializarRecursos() throws AppException {
+    private void inicializarRecursos() throws AppException, SQLException {
         videojuegoBL = new VideojuegoBL();
-        btnPrev     = new JButton(" << ");
-        btnNext     = new JButton(" >> ");
-        btnInicio   = new JButton(" |< ");
-        btnFinal    = new JButton(" >| ");
-        lblPagina   = new JLabel();
-        pnlBoton    = new JPanel();
-
+        btnPrev = new JButton(" << ");
+        btnNext = new JButton(" >> ");
+        btnInicio = new JButton(" |< ");
+        btnFinal = new JButton(" >| ");
+        lblPagina = new JLabel();
+        pnlBoton = new JPanel();
 
         pagActual = 0;
         cantFilas = 5;
+        inicio = (pagActual * cantFilas) + 1;
+        ultimo = inicio + cantFilas;
+        pagMax = (videojuegoBL.getCountFilas() - 1) / cantFilas;
 
-        header = new String[]{"Id", "Titulo", "Distribuidor", "Plataforma Popular", "Anio Lanzamiento", "Ventas (millones)"};
-        data = new Object[videojuegoBL.getRegistrosActivos().size()][6];  
-        int index = 0;
-        for(Videojuego v : videojuegoBL.getRegistrosActivos()) {
-            data[index][0] = v.getId();
-            data[index][1] = v.getNombre();
-            data[index][2] = v.getDistribuidor();
-            data[index][3] = v.getPlataforma();
-            data[index][4] = v.getAnioLanzamiento();
-            data[index][5] = v.getVentasEstimadas() / 1000000;
-            index++;
-        }
+        header = new String[] { "Id", "Titulo", "Distribuidor", "Plataforma Popular", "Anio Lanzamiento",
+                "Ventas (millones)" };
+        data = new Object[videojuegoBL.getRegistros(inicio, ultimo).size()][6];
 
-        pagMax = (data.length - 1) / cantFilas;
+        tableModel = new DefaultTableModel(data, header);
+        actualizarTabla();
+
     }
 
     private void activarBotones() {
@@ -83,43 +72,52 @@ public class PanelVideojuego extends JPanel implements ActionListener{
         btnInicio.addActionListener(this);
         btnFinal.addActionListener(this);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnNext) 
+        if (e.getSource() == btnNext)
             if (pagActual < pagMax)
                 pagActual++;
         if (e.getSource() == btnPrev)
-            if (pagActual > 0) 
+            if (pagActual > 0)
                 pagActual--;
-        if (e.getSource() == btnInicio) 
+        if (e.getSource() == btnInicio)
             pagActual = 0;
         if (e.getSource() == btnFinal)
             pagActual = pagMax;
-        actualizarTabla();
+        try {
+            actualizarTabla();
+        } catch (AppException e1) {
+            e1.printStackTrace();
+        }
     }
 
-    
+    private void actualizarTabla() throws AppException {
+        tableModel.setRowCount(0);
+        inicio = (pagActual * cantFilas) + 1;
+        ultimo = inicio + cantFilas;
 
-    private void actualizarTabla() {
-        tableModel.setRowCount(0); 
-        int start = pagActual * cantFilas;
-        int end = start + cantFilas;
-        
-        for (int i = start; i < end; i++) {
-            Object[] fila = data[i];
-            tableModel.addRow(fila);
+        int index = 0;
+        for (Videojuego v : videojuegoBL.getRegistros(inicio, ultimo)) {
+            data[index][0] = v.getId();
+            data[index][1] = v.getNombre();
+            data[index][2] = v.getDistribuidor();
+            data[index][3] = v.getPlataforma();
+            data[index][4] = v.getAnioLanzamiento();
+            data[index][5] = v.getVentasEstimadas() / 1000000;
+            tableModel.addRow(data[index]);
+            index++;
         }
 
         actualizarIndicadorPagina();
     }
 
     private void actualizarIndicadorPagina() {
-        String textoPagina  = " Page  :  [  "
-                            + (pagActual + 1)
-                            + "  of  "
-                            + (pagMax + 1)
-                            + "  ]  ";
+        String textoPagina = " Page  :  [  "
+                + (pagActual + 1)
+                + "  of  "
+                + (pagMax + 1)
+                + "  ]  ";
         lblPagina.setText(textoPagina);
     }
 
@@ -127,12 +125,10 @@ public class PanelVideojuego extends JPanel implements ActionListener{
         setLayout(new BorderLayout());
     }
 
-    private void mostrarTabla() {
+    private void mostrarTabla() throws AppException {
         int rowHeight = 30;
-        Font fuente = new Font("Arial", Font.PLAIN, 16);               
-        Font fuente2 = new Font("Arial", Font.BOLD, 16);               
-        
-        tableModel = new DefaultTableModel(data, header);
+        Font fuente = new Font("Arial", Font.PLAIN, 16);
+        Font fuente2 = new Font("Arial", Font.BOLD, 16);
 
         tabla = new JTable(tableModel);
         tabla.setShowHorizontalLines(true);
@@ -141,11 +137,11 @@ public class PanelVideojuego extends JPanel implements ActionListener{
         tabla.setColumnSelectionAllowed(false);
         tabla.setPreferredScrollableViewportSize(new Dimension(1000, 400));
         tabla.setFillsViewportHeight(true);
-        
+
         tabla.setRowHeight(rowHeight);
         tabla.getTableHeader().setFont(fuente2); // Configura el renderizador de encabezado personalizado
         tabla.setFont(fuente);
-        
+
         agregarComponentes();
         actualizarTabla();
 
@@ -161,5 +157,4 @@ public class PanelVideojuego extends JPanel implements ActionListener{
         add(pnlBoton, BorderLayout.SOUTH);
     }
 
-    
 }

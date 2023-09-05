@@ -2,6 +2,7 @@ package DataAccess;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,9 +11,10 @@ import Framework.AppException;
 
 public abstract class SQLiteDataHelper {
     private final String RUTA_DATABASE = "jdbc:sqlite:database\\BaseDatos.db"; 
-    private Connection conn = null;
-    private Statement stmt;
-    private ResultSet rs;
+    protected Connection conn = null;
+    protected Statement stmt;
+    protected ResultSet rs;
+    protected PreparedStatement ps;
     protected String consultaSQL;
 
     protected Connection getConnection() throws AppException {
@@ -41,6 +43,5 @@ public abstract class SQLiteDataHelper {
         return rs;
     }
     
-    public abstract ResultSet readRegistrosActivos() throws AppException;
 
 }

@@ -10,12 +10,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.sql.SQLException;
 
 public class FrameMaster extends JFrame {
     private PanelVideojuego panelVideojuego;
     private JLabel lblTitulo;
 
-    public FrameMaster(String titulo) throws AppException {
+    public FrameMaster(String titulo) throws AppException, SQLException {
         personalizarFrame(titulo);
         mostrarPanel();
 
@@ -33,7 +34,7 @@ public class FrameMaster extends JFrame {
         
     }
 
-    private void mostrarPanel() throws AppException {
+    private void mostrarPanel() throws AppException, SQLException {
         JPanel panel = new JPanel();
         Font fuente = new Font("Arial", Font.BOLD, 20);     
         panelVideojuego = new PanelVideojuego();
