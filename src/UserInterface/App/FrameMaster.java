@@ -23,11 +23,12 @@ public class FrameMaster extends JFrame {
     }
 
     private void personalizarFrame(String titulo) throws AppException {
-        setTitle(titulo);                           
+        setTitle(titulo);                    
         setLayout(new BorderLayout());
         setResizable(true);
         setSize(1000, 350);
         setLocationRelativeTo(null);
+        setResizable(false);       
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         
