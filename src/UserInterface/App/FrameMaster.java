@@ -19,7 +19,6 @@ public class FrameMaster extends JFrame {
         personalizarFrame(titulo);
         mostrarPanel();
 
-        setVisible(true);
     }
 
     private void personalizarFrame(String titulo) throws AppException {

@@ -43,5 +43,4 @@ public abstract class SQLiteDataHelper {
     
     public abstract ResultSet readRegistrosActivos() throws AppException;
 
-    // protected abstract ResultSet getById(int IdRegistro) throws AppException;
 }

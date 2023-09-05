@@ -19,7 +19,7 @@ INSERT INTO EMPRESA (Nombre, SitioWeb, DireccionSede, AnioFundacion)
 VALUES              ('Electronic Arts', 'www.ea.com', 'California, EE. UU.', '1982');
 
 INSERT INTO EMPRESA (Nombre, SitioWeb, DireccionSede, AnioFundacion) 
-VALUES              ('Nintendo', 'www.nintendo.com', 'Kioto, JapÛn', '1889');
+VALUES              ('Nintendo', 'www.nintendo.com', 'Kioto, Jap√≥n', '1889');
 
 INSERT INTO EMPRESA (Nombre, SitioWeb, DireccionSede, AnioFundacion) 
 VALUES              ('Krafton', 'www.krafton.com', 'Seongnam', '2007');
@@ -31,7 +31,7 @@ INSERT INTO EMPRESA (Nombre, SitioWeb, DireccionSede, AnioFundacion)
 VALUES              ('CD Projekt', 'www.cdprojekt.com', 'Varsovia, Polonia', '1994');
 
 INSERT INTO EMPRESA (Nombre, SitioWeb, DireccionSede, AnioFundacion) 
-VALUES              ('505 Games', 'www.505games.com', 'Mil·n, Italia', '2006');
+VALUES              ('505 Games', 'www.505games.com', 'Mil√°n, Italia', '2006');
 
 INSERT INTO EMPRESA (Nombre, SitioWeb, DireccionSede, AnioFundacion) 
 VALUES              ('Activision', 'www.activision.com', 'California, EE. UU.', '1979');
